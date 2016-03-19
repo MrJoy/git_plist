@@ -1,6 +1,6 @@
 # GitPlist
 
-A git filter for OS X `*.plist` files.  Handy for using git with `~/Library/Preferences`.
+A git diff-filter for OS X `*.plist` files.  Handy for using git with `~/Library/Preferences`.
 
 (Note:  I don't recommend this as a strategy for versioning your machine configuration, but being able to see changes here can be useful for discovering what keys to use with the `defaults` command...)
 
