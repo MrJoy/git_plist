@@ -44,8 +44,7 @@ module GitPlist
 
     return data if original_format == :unknown
 
-    result =  { original_format: original_format }
-              .merge(GitPlist.normalize_to_json(data))
+    result = { original_format: original_format }.merge(GitPlist.normalize_to_json(data))
 
     "#{JSON.pretty_generate(result)}\n"
   end
