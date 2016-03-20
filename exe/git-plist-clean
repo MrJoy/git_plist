@@ -11,5 +11,5 @@ if original_format == :unknown
 end
 
 result =  { original_format: original_format }
-          .merge(GitPList.convert_to_json(data, original_format))
+          .merge(GitPlist.convert_to_json(data, original_format))
 puts JSON.pretty_generate(result)

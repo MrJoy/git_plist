@@ -43,11 +43,11 @@ module GitPlist
       # TODO: Use POpen3 or some such and stream the data in, rather than using a temp file.
       out_fname   = Shellwords.shellescape(file_out.path)
       new_data    = `plutil -convert json #{out_fname} -s -o -`.lstrip
-      return enclose(:json, JSON.parse(new_data).canonicalize) if is_json?(new_data)
+      return enclose(:json, JSON.parse(new_data).canonicalize) if json?(new_data)
 
       # Must have a binary blob or date value, because it don't wanna give us JSON.  Boo!
       new_data = `plutil -convert xml1 #{out_fname} -s -o -`.lstrip
-      return enclose(:xml1, new_data.rstrip.split(/\n/)) if is_xml?(new_data)
+      return enclose(:xml1, new_data.rstrip.split(/\n/)) if xml?(new_data)
 
       # Ruh-roh!  Something went wrong!
       return enclose(:unknown, new_data.bytes.map(&:ord))
