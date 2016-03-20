@@ -1,7 +1,7 @@
 require "git_plist/version"
 require "shellwords"
 require "json"
-require "tempfile"
+require "open3"
 
 # These monkey-patches are to avoid spurious diffs caused by non-semantically-significant ordering
 # differences -- specifically in maps.  However, to keep it simple we just ensure `canonicalize` can
@@ -43,29 +43,21 @@ module GitPlist
   end
 
   def self.normalize_to_json(data, original_format)
-    file_out = Tempfile.new("plist_clean_out")
-    begin
-      file_out.write(data)
-      file_out.flush
+    # Try to convert to JSON, if possible.  This produces the cleanest/easiest to review diffs.
+    stdout_str, stderr_str, status = Open3.capture3("plutil -convert json - -s -o -",
+                                                    stdin_data: data,
+                                                    binmode:    true)
+    return enclose(:json, JSON.parse(stdout_str).canonicalize) if status.success?
 
-      # Passing gibberish through as-is...
-      return enclose(:unknown, data.bytes.map(&:ord)) unless PLIST_FORMATS.include?(original_format)
+    # Must have a binary blob or date value, because it don't wanna give us JSON.  Boo!  Try XML,
+    # which we'll split on line breaks to keep diffs relatively readable.
+    stdout_str, stderr_str, status = Open3.capture3("plutil -convert xml1 - -s -o -",
+                                                    stdin_data: data,
+                                                    binmode:    true)
+    return enclose(:xml1, stdout_str.rstrip.split(/\n/)) if status.success?
 
-      # TODO: Use POpen3 or some such and stream the data in, rather than using a temp file.
-      out_fname   = Shellwords.shellescape(file_out.path)
-      new_data    = `plutil -convert json #{out_fname} -s -o -`.lstrip
-      return enclose(:json, JSON.parse(new_data).canonicalize) if json?(new_data)
-
-      # Must have a binary blob or date value, because it don't wanna give us JSON.  Boo!
-      new_data = `plutil -convert xml1 #{out_fname} -s -o -`.lstrip
-      return enclose(:xml1, new_data.rstrip.split(/\n/)) if xml?(new_data)
-
-      # Ruh-roh!  Something went wrong!
-      return enclose(:unknown, new_data.bytes.map(&:ord))
-    ensure
-      file_out.close
-      file_out.unlink
-    end
+    # Whatever the hell we have, `plutil` does NOT like it...
+    return enclose(:unknown, data.bytes.map(&:ord))
   end
 
   def self.enclose(new_format, new_data); { new_format: new_format, data: new_data }; end
