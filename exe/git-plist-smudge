@@ -38,7 +38,8 @@ begin
   when "unknown"
     printf "%s", result["data"].map(&:chr).join("").force_encoding("ASCII-8BIT")
   else
-    raise "Expected new_format to be one of xml1, json, or unknown.  Got: #{result['new_format'].inspect}"
+    raise "Expected new_format to be one of xml1, json, or unknown."\
+          "  Got: #{result['new_format'].inspect}"
   end
 ensure
   file_out.close

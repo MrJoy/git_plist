@@ -6,6 +6,7 @@ require "tempfile"
 # These monkey-patches are to avoid spurious diffs caused by non-semantically-significant ordering
 # differences -- specifically in maps.  However, to keep it simple we just ensure `canonicalize` can
 # be safely called on (pretty-much) *anything*.
+#
 # rubocop:disable Style/Documentation
 class Object; def canonicalize; self; end; end
 class NilClass; def canonicalize; self; end; end
