@@ -1,5 +1,4 @@
 require "git_plist/version"
-require "shellwords"
 require "json"
 require "open3"
 
