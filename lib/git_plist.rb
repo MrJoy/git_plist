@@ -31,7 +31,18 @@ module GitPlist
   XML_MARKER    = "<?xm".freeze
   PLIST_FORMATS = [:xml1, :binary1, :json].freeze
 
-  def self.convert_to_json(data, original_format)
+  def self.clean(data)
+    original_format = GitPlist.format_of(data)
+
+    return :unknown, data if original_format == :unknown
+
+    result =  { original_format: original_format }
+              .merge(GitPlist.normalize_to_json(data, original_format))
+
+    [:json, result]
+  end
+
+  def self.normalize_to_json(data, original_format)
     file_out = Tempfile.new("plist_clean_out")
     begin
       file_out.write(data)

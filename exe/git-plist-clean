@@ -2,13 +2,11 @@
 require "git_plist"
 
 data            = STDIN.read.force_encoding("ASCII-8BIT")
-original_format = GitPlist.format_of(data)
+format, result  = GitPlist.clean(data)
 
-if original_format == :unknown
-  printf "%s", data
+if format == :unknown
+  printf "%s", result
   exit
 end
 
-result =  { original_format: original_format }
-          .merge(GitPlist.convert_to_json(data, original_format))
 puts JSON.pretty_generate(result)
