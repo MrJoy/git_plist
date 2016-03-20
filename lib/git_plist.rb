@@ -41,12 +41,9 @@ module GitPlist
 
   def self.data_from(result)
     case result["new_format"]
-    when "xml1"
-      result["data"].join("\n")
-    when "json"
-      JSON.generate(result["data"])
-    else
-      string_from_unknown(result)
+    when "xml1" then  result["data"].join("\n")
+    when "json" then  JSON.generate(result["data"])
+    else              string_from_unknown(result)
     end
   end
 
