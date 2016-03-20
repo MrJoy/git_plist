@@ -31,11 +31,11 @@ module GitPlist
   PLIST_FORMATS = [:xml1, :binary1, :json].freeze
 
   def self.convert(data, format)
-    out, err, status = Open3.capture3("plutil -convert #{format} - -s -o -",
-                                      stdin_data: data,
-                                      binmode:    true)
+    out, _err, status = Open3.capture3("plutil -convert #{format} - -s -o -",
+                                       stdin_data: data,
+                                       binmode:    true)
     return nil unless status.success?
-    return out
+    out
   end
 
   def self.string_from_unknown(result); result["data"].map(&:chr).join(""); end
