@@ -25,3 +25,13 @@ task :update_fixtures do
     end
   end
 end
+
+desc "Update binary/JSON fixtures from XML versions, then canonicalize the XML versions."
+task :update_results do
+  # TODO: Bail if XML versions are dirty so we can't accidentally destroy work on them.
+  cd "spec/fixtures" do
+    FileList["*.plist"].each do |sample|
+      sh "cat #{sample} | bundle exec ../../exe/git-plist-clean > #{sample}.clean"
+    end
+  end
+end

@@ -15,3 +15,5 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 1. Commit your changes to those files.
 1. `rake update_fixtures`
 1. Commit changes to all fixtures.  Note that the XML versions may have changed -- be sure the changes are only in formatting/ordering, and if so, commit those.
+1. `rake update_results`
+1. Ensure the results are correct, and commit changes to modified `*.clean` files.

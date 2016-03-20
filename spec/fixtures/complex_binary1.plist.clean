@@ -1,0 +1,18 @@
+{
+  "original_format": "binary1",
+  "new_format": "xml1",
+  "data": [
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+    "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">",
+    "<plist version=\"1.0\">",
+    "<dict>",
+    "\t<key>data_value</key>",
+    "\t<data>",
+    "\tSGVsbG8sIHdvcmxkLgo=",
+    "\t</data>",
+    "\t<key>date_value</key>",
+    "\t<date>2016-01-01T00:00:00Z</date>",
+    "</dict>",
+    "</plist>"
+  ]
+}

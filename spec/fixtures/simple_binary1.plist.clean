@@ -1,0 +1,28 @@
+{
+  "original_format": "binary1",
+  "new_format": "json",
+  "data": {
+    "array_value": [
+      "1",
+      "2",
+      "3"
+    ],
+    "dict_value": {
+      "array_value": [
+        "1",
+        "2",
+        "3"
+      ],
+      "false_value": false,
+      "float_value": 0,
+      "int_value": 0,
+      "string_value": "Hello, world!",
+      "true_value": true
+    },
+    "false_value": false,
+    "float_value": 0,
+    "int_value": 0,
+    "string_value": "Hello, world!",
+    "true_value": true
+  }
+}
