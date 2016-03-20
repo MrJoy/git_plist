@@ -11,7 +11,7 @@ A git diff-filter for OS X `*.plist` files.  Handy for using git with `~/Library
 sudo gem install git_plist
 
 git config --global filter.plist.clean git-plist-clean
-git config --global filter.plist.smudge "git-plist-smudge %f"
+git config --global filter.plist.smudge git-plist-smudge
 ```
 
 
