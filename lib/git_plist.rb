@@ -31,6 +31,14 @@ module GitPlist
   XML_MARKER    = "<?xm".freeze
   PLIST_FORMATS = [:xml1, :binary1, :json].freeze
 
+  def self.convert(data, format)
+    Open3.capture3("plutil -convert #{format} - -s -o -",
+                   stdin_data: data,
+                   binmode:    true)
+  end
+
+  def self.string_from_unknown(result); result["data"].map(&:chr).join(""); end
+
   def self.clean(data)
     original_format = GitPlist.format_of(data)
 
@@ -56,29 +64,23 @@ module GitPlist
             when "json"
               JSON.generate(result["data"])
             else
-              result["data"].map(&:chr).join("")
+              string_from_unknown(result)
             end
     fmt   = result["original_format"]
 
-    stdout_str, _stderr_str, status = Open3.capture3("plutil -convert #{fmt} - -s -o -",
-                                                     stdin_data: data.force_encoding("ASCII-8BIT"),
-                                                     binmode:    true)
-    return result["data"].map(&:chr).join("") unless status.success?
+    stdout_str, _stderr_str, status = convert(data.force_encoding("ASCII-8BIT"), fmt)
+    return string_from_unknown(result) unless status.success?
     stdout_str
   end
 
   def self.normalize_to_json(data)
     # Try to convert to JSON, if possible.  This produces the cleanest/easiest to review diffs.
-    stdout_str, _stderr_str, status = Open3.capture3("plutil -convert json - -s -o -",
-                                                     stdin_data: data,
-                                                     binmode:    true)
+    stdout_str, _stderr_str, status = convert(data, "json")
     return enclose(:json, JSON.parse(stdout_str).canonicalize) if status.success?
 
     # Must have a binary blob or date value, because it don't wanna give us JSON.  Boo!  Try XML,
     # which we'll split on line breaks to keep diffs relatively readable.
-    stdout_str, _stderr_str, status = Open3.capture3("plutil -convert xml1 - -s -o -",
-                                                     stdin_data: data,
-                                                     binmode:    true)
+    stdout_str, _stderr_str, status = convert(data, "xml1")
     return enclose(:xml1, stdout_str.rstrip.split(/\n/)) if status.success?
 
     # Whatever the hell we have, `plutil` does NOT like it...
