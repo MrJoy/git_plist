@@ -67,8 +67,8 @@ module GitPlist
     result = JSON.parse(raw)
     raise "Parse error, expected a JSON hash, got: #{result.class}" unless result.is_a?(Hash)
 
-    data              = data_from(result)
-    fmt               = result["original_format"]
+    data  = data_from(result)
+    fmt   = result["original_format"]
 
     convert(data.force_encoding("ASCII-8BIT"), fmt) || string_from_unknown(result)
   end
