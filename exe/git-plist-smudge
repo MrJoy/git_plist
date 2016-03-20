@@ -19,7 +19,7 @@ end
 raw = STDIN.read
 # If we get a zero-length input, or non-JSON input, don't try to be clever, just pass it through and
 # hope for the best.
-if raw.length == 0 || raw[0] != "{"
+if raw.empty? || raw[0] != "{"
   printf "%s", raw
   exit
 end
@@ -38,7 +38,7 @@ begin
   when "unknown"
     printf "%s", result["data"].map(&:chr).join("").force_encoding("ASCII-8BIT")
   else
-    raise "Expected new_format to be one of xml1, json, or unknown.  Got: #{result["new_format"].inspect}"
+    raise "Expected new_format to be one of xml1, json, or unknown.  Got: #{result['new_format'].inspect}"
   end
 ensure
   file_out.close
