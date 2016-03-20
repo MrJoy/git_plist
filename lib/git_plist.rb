@@ -27,7 +27,7 @@ end
 
 # Git diff filter for OS X `*.plist` files.
 module GitPlist
-  JSON_MARKERS  = ["{", "["].freeze
+  JSON_MARKER   = "{".freeze
   XML_MARKER    = "<?xm".freeze
   PLIST_FORMATS = [:xml1, :binary1, :json].freeze
 
@@ -72,6 +72,6 @@ module GitPlist
     end
   end
 
-  def self.json?(prefix); JSON_MARKERS.include?(prefix[0]); end
+  def self.json?(prefix); prefix[0] == JSON_MARKER; end
   def self.xml?(prefix); prefix[0..3] == XML_MARKER; end
 end
