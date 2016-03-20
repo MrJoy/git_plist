@@ -1,33 +1,5 @@
 #!/usr/bin/env ruby
 require "git_plist"
 
-def dump_data(data, original_format)
-  stdout_str, stderr_str, status = Open3.capture3("plutil -convert #{original_format} - -s -o -",
-                                                  stdin_data: data,
-                                                  binmode:    true)
-  raise "Got status #{status.exit}: #{stderr_str}" unless status.success?
-  printf "%s", stdout_str#.force_encoding("ASCII-8BIT")
-end
-
-raw = STDIN.read
-# If we get a zero-length input, or non-JSON input, don't try to be clever, just pass it through and
-# hope for the best.
-if raw.empty? || raw[0] != "{"
-  printf "%s", raw
-  exit
-end
-
-result = JSON.parse(raw)
-raise "Parse error, expected a JSON object, got: #{result.class}" unless result.is_a?(Hash)
-
-case result["new_format"]
-when "xml1"
-  dump_data(result["data"].join("\n"), result["original_format"])
-when "json"
-  dump_data(JSON.generate(result["data"]), result["original_format"])
-when "unknown"
-  printf "%s", result["data"].map(&:chr).join("").force_encoding("ASCII-8BIT")
-else
-  raise "Expected new_format to be one of xml1, json, or unknown."\
-        "  Got: #{result['new_format'].inspect}"
-end
+raw = STDIN.read.force_encoding("ASCII-8BIT")
+printf "%s", GitPlist.smudge(raw)
