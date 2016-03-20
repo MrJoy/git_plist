@@ -7,7 +7,7 @@ original_format = GitPlist.format_of(data)
 
 if original_format == :unknown
   printf "%s", data
-  return
+  exit
 end
 
 result =  { original_format: original_format }
