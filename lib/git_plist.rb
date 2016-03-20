@@ -39,6 +39,7 @@ module GitPlist
       # Passing gibberish through as-is...
       return enclose(:unknown, data.bytes.map(&:ord)) unless PLIST_FORMATS.include?(original_format)
 
+      # TODO: Use POpen3 or some such and stream the data in, rather than using a temp file.
       out_fname   = Shellwords.shellescape(file_out.path)
       new_data    = `plutil -convert json #{out_fname} -s -o -`.lstrip
       return enclose(:json, JSON.parse(new_data).canonicalize) if is_json?(new_data)
