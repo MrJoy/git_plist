@@ -65,8 +65,8 @@ module GitPlist
   def self.format_of(data)
     magic_word = !data.empty? ? data[0..3] : ""
     case
-    when magic_word == "bpli" then :binary1
-    when xml?(magic_word)     then :xml1
+    when magic_word == "bpli" then :binary1 # TODO: What happens if they make a v2 of the format?
+    when xml?(magic_word)     then :xml1 # TODO: What happens if they make a v2 of the format?
     when json?(magic_word)    then :json
     else                           :unknown
     end
