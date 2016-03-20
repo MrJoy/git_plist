@@ -37,7 +37,7 @@ module GitPlist
     return :unknown, data if original_format == :unknown
 
     result =  { original_format: original_format }
-              .merge(GitPlist.normalize_to_json(data, original_format))
+              .merge(GitPlist.normalize_to_json(data))
 
     [:json, result]
   end
@@ -66,7 +66,7 @@ module GitPlist
     stdout_str
   end
 
-  def self.normalize_to_json(data, original_format)
+  def self.normalize_to_json(data)
     # Try to convert to JSON, if possible.  This produces the cleanest/easiest to review diffs.
     stdout_str, stderr_str, status = Open3.capture3("plutil -convert json - -s -o -",
                                                     stdin_data: data,
