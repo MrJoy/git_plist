@@ -26,7 +26,7 @@ task :update_fixtures do
   end
 end
 
-desc "Update binary/JSON fixtures from XML versions, then canonicalize the XML versions."
+desc "Update samples of clean filter output."
 task :update_results do
   # TODO: Bail if XML versions are dirty so we can't accidentally destroy work on them.
   cd "spec/fixtures" do
