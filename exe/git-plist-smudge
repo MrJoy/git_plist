@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 require "git_plist"
 
-raw = STDIN.read.force_encoding("ASCII-8BIT")
-printf "%s", GitPlist.smudge(raw)
+data = STDIN.read.force_encoding("ASCII-8BIT")
+printf "%s", GitPlist.smudge(data)

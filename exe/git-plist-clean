@@ -1,12 +1,5 @@
 #!/usr/bin/env ruby
 require "git_plist"
 
-data            = STDIN.read.force_encoding("ASCII-8BIT")
-format, result  = GitPlist.clean(data)
-
-if format == :unknown
-  printf "%s", result
-  exit
-end
-
-puts JSON.pretty_generate(result)
+data = STDIN.read.force_encoding("ASCII-8BIT")
+printf "%s", GitPlist.clean(data)

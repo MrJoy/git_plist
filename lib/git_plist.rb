@@ -42,12 +42,12 @@ module GitPlist
   def self.clean(data)
     original_format = GitPlist.format_of(data)
 
-    return :unknown, data if original_format == :unknown
+    return data if original_format == :unknown
 
     result =  { original_format: original_format }
               .merge(GitPlist.normalize_to_json(data))
 
-    [:json, result]
+    JSON.pretty_generate(result)
   end
 
   def self.smudge(raw)
