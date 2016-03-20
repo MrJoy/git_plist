@@ -39,6 +39,17 @@ module GitPlist
 
   def self.string_from_unknown(result); result["data"].map(&:chr).join(""); end
 
+  def self.data_from(result)
+    case result["new_format"]
+    when "xml1"
+      result["data"].join("\n")
+    when "json"
+      JSON.generate(result["data"])
+    else
+      string_from_unknown(result)
+    end
+  end
+
   def self.clean(data)
     original_format = GitPlist.format_of(data)
 
@@ -57,30 +68,23 @@ module GitPlist
     result = JSON.parse(raw)
     raise "Parse error, expected a JSON hash, got: #{result.class}" unless result.is_a?(Hash)
 
-    data  = case result["new_format"]
-            when "xml1"
-              result["data"].join("\n")
-            when "json"
-              JSON.generate(result["data"])
-            else
-              string_from_unknown(result)
-            end
-    fmt   = result["original_format"]
-
-    stdout_str, _stderr_str, status = convert(data.force_encoding("ASCII-8BIT"), fmt)
+    data              = data_from(result)
+    fmt               = result["original_format"]
+    out, _err, status = convert(data.force_encoding("ASCII-8BIT"), fmt)
     return string_from_unknown(result) unless status.success?
-    stdout_str
+
+    out
   end
 
   def self.normalize_to_json(data)
     # Try to convert to JSON, if possible.  This produces the cleanest/easiest to review diffs.
-    stdout_str, _stderr_str, status = convert(data, "json")
-    return enclose(:json, JSON.parse(stdout_str).canonicalize) if status.success?
+    out, _err, status = convert(data, "json")
+    return enclose(:json, JSON.parse(out).canonicalize) if status.success?
 
     # Must have a binary blob or date value, because it don't wanna give us JSON.  Boo!  Try XML,
     # which we'll split on line breaks to keep diffs relatively readable.
-    stdout_str, _stderr_str, status = convert(data, "xml1")
-    return enclose(:xml1, stdout_str.rstrip.split(/\n/)) if status.success?
+    out, _err, status = convert(data, "xml1")
+    return enclose(:xml1, out.rstrip.split(/\n/)) if status.success?
 
     # Whatever the hell we have, `plutil` does NOT like it...
     enclose(:unknown, data.bytes.map(&:ord))
