@@ -47,7 +47,7 @@ module GitPlist
     result =  { original_format: original_format }
               .merge(GitPlist.normalize_to_json(data))
 
-    JSON.pretty_generate(result)
+    "#{JSON.pretty_generate(result)}\n"
   end
 
   def self.smudge(raw)
