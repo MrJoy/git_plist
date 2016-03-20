@@ -10,13 +10,20 @@ A git diff-filter for OS X `*.plist` files.  Handy for using git with `~/Library
 ```bash
 sudo gem install git_plist
 
-# TODO: Add relevant `git config` statements here...
+git config --global filter.plist.clean git-plist-clean
+git config --global filter.plist.smudge "git-plist-smudge %f"
 ```
 
 
 ## Usage
 
-TODO: Add instructions for `.gitattributes` file here.
+In a git repository:
+
+```bash
+echo '*.plist filter=plist' >> .gitattributes
+git add .gitattributes
+git commit -m "Enable git-plist filter on *.plist."
+```
 
 
 ## Development
