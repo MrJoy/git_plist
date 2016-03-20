@@ -8,13 +8,5 @@
 	</data>
 	<key>date_value</key>
 	<date>2016-01-01T00:00:00Z</date>
-	<key>false_value</key>
-	<false/>
-	<key>float_value</key>
-	<real>0.0</real>
-	<key>int_value</key>
-	<integer>0</integer>
-	<key>true_value</key>
-	<true/>
 </dict>
 </plist>

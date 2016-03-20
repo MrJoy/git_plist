@@ -2,7 +2,40 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>some_key_1</key>
-	<string>some_string</string>
+	<key>array_value</key>
+	<array>
+		<string>1</string>
+		<string>2</string>
+		<string>3</string>
+	</array>
+	<key>dict_value</key>
+	<dict>
+		<key>array_value</key>
+		<array>
+			<string>1</string>
+			<string>2</string>
+			<string>3</string>
+		</array>
+		<key>false_value</key>
+		<false/>
+		<key>float_value</key>
+		<real>0.0</real>
+		<key>int_value</key>
+		<integer>0</integer>
+		<key>string_value</key>
+		<string>Hello, world!</string>
+		<key>true_value</key>
+		<true/>
+	</dict>
+	<key>false_value</key>
+	<false/>
+	<key>float_value</key>
+	<real>0.0</real>
+	<key>int_value</key>
+	<integer>0</integer>
+	<key>string_value</key>
+	<string>Hello, world!</string>
+	<key>true_value</key>
+	<true/>
 </dict>
 </plist>

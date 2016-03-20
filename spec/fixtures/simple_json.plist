@@ -1,1 +1,1 @@
-{"some_key_1":"some_string"}
+{"int_value":0,"array_value":["1","2","3"],"string_value":"Hello, world!","dict_value":{"int_value":0,"array_value":["1","2","3"],"string_value":"Hello, world!","false_value":false,"true_value":true,"float_value":0},"false_value":false,"true_value":true,"float_value":0}
