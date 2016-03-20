@@ -28,7 +28,6 @@ end
 
 desc "Update samples of clean filter output."
 task :update_results do
-  # TODO: Bail if XML versions are dirty so we can't accidentally destroy work on them.
   cd "spec/fixtures" do
     FileList["*.plist"].each do |sample|
       sh "cat #{sample} | bundle exec ../../exe/git-plist-clean > #{sample}.clean"
