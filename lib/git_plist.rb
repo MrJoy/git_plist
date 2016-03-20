@@ -32,12 +32,15 @@ module GitPlist
   PLIST_FORMATS = [:xml1, :binary1, :json].freeze
 
   def self.convert(data, format)
-    Open3.capture3("plutil -convert #{format} - -s -o -",
-                   stdin_data: data,
-                   binmode:    true)
+    out, err, status = Open3.capture3("plutil -convert #{format} - -s -o -",
+                                      stdin_data: data,
+                                      binmode:    true)
+    return nil unless status.success?
+    return out
   end
 
   def self.string_from_unknown(result); result["data"].map(&:chr).join(""); end
+  def self.unknown_from_string(data); data.bytes.map(&:ord); end
 
   def self.data_from(result)
     case result["new_format"]
@@ -67,24 +70,22 @@ module GitPlist
 
     data              = data_from(result)
     fmt               = result["original_format"]
-    out, _err, status = convert(data.force_encoding("ASCII-8BIT"), fmt)
-    return string_from_unknown(result) unless status.success?
 
-    out
+    convert(data.force_encoding("ASCII-8BIT"), fmt) || string_from_unknown(result)
   end
 
   def self.normalize_to_json(data)
     # Try to convert to JSON, if possible.  This produces the cleanest/easiest to review diffs.
-    out, _err, status = convert(data, "json")
-    return enclose(:json, JSON.parse(out).canonicalize) if status.success?
+    out = convert(data, "json")
+    return enclose(:json, JSON.parse(out).canonicalize) if out
 
     # Must have a binary blob or date value, because it don't wanna give us JSON.  Boo!  Try XML,
     # which we'll split on line breaks to keep diffs relatively readable.
-    out, _err, status = convert(data, "xml1")
-    return enclose(:xml1, out.rstrip.split(/\n/)) if status.success?
+    out = convert(data, "xml1")
+    return enclose(:xml1, out.rstrip.split(/\n/)) if out
 
     # Whatever the hell we have, `plutil` does NOT like it...
-    enclose(:unknown, data.bytes.map(&:ord))
+    enclose(:unknown, unknown_from_string(data))
   end
 
   def self.enclose(new_format, new_data); { new_format: new_format, data: new_data }; end
