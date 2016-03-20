@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 require "git_plist"
 
 data            = STDIN.read.force_encoding("ASCII-8BIT")

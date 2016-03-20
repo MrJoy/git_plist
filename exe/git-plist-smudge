@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
-
 require "git_plist"
-
-# See `git_plist_clean.rb` for instructions.
 
 def dump_data(data, original_format, file_out, file_in)
   file_out.write(data)
