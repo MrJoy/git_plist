@@ -43,45 +43,46 @@ module GitPlist
   end
 
   def self.smudge(raw)
-    # If we get a zero-length input, or non-JSON input, don't try to be clever, just pass it through and
-    # hope for the best.
+    # If we get a zero-length input, or non-JSON input, don't try to be clever, just pass it through
+    # and hope for the best.
     return raw if raw.empty? || !json?(raw)
 
     result = JSON.parse(raw)
     raise "Parse error, expected a JSON hash, got: #{result.class}" unless result.is_a?(Hash)
 
-    case result["new_format"]
-    when "xml1"
-      data = result["data"].join("\n")
-    when "json"
-      data = JSON.generate(result["data"])
-    else
-      data = result["data"].map(&:chr).join("")
-    end
+    data  = case result["new_format"]
+            when "xml1"
+              result["data"].join("\n")
+            when "json"
+              JSON.generate(result["data"])
+            else
+              result["data"].map(&:chr).join("")
+            end
+    fmt   = result["original_format"]
 
-    stdout_str, stderr_str, status = Open3.capture3("plutil -convert #{result["original_format"]} - -s -o -",
-                                                    stdin_data: data.force_encoding("ASCII-8BIT"),
-                                                    binmode:    true)
+    stdout_str, _stderr_str, status = Open3.capture3("plutil -convert #{fmt} - -s -o -",
+                                                     stdin_data: data.force_encoding("ASCII-8BIT"),
+                                                     binmode:    true)
     return result["data"].map(&:chr).join("") unless status.success?
     stdout_str
   end
 
   def self.normalize_to_json(data)
     # Try to convert to JSON, if possible.  This produces the cleanest/easiest to review diffs.
-    stdout_str, stderr_str, status = Open3.capture3("plutil -convert json - -s -o -",
-                                                    stdin_data: data,
-                                                    binmode:    true)
+    stdout_str, _stderr_str, status = Open3.capture3("plutil -convert json - -s -o -",
+                                                     stdin_data: data,
+                                                     binmode:    true)
     return enclose(:json, JSON.parse(stdout_str).canonicalize) if status.success?
 
     # Must have a binary blob or date value, because it don't wanna give us JSON.  Boo!  Try XML,
     # which we'll split on line breaks to keep diffs relatively readable.
-    stdout_str, stderr_str, status = Open3.capture3("plutil -convert xml1 - -s -o -",
-                                                    stdin_data: data,
-                                                    binmode:    true)
+    stdout_str, _stderr_str, status = Open3.capture3("plutil -convert xml1 - -s -o -",
+                                                     stdin_data: data,
+                                                     binmode:    true)
     return enclose(:xml1, stdout_str.rstrip.split(/\n/)) if status.success?
 
     # Whatever the hell we have, `plutil` does NOT like it...
-    return enclose(:unknown, data.bytes.map(&:ord))
+    enclose(:unknown, data.bytes.map(&:ord))
   end
 
   def self.enclose(new_format, new_data); { new_format: new_format, data: new_data }; end
