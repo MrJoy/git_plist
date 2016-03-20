@@ -62,7 +62,7 @@ module GitPlist
     stdout_str, stderr_str, status = Open3.capture3("plutil -convert #{result["original_format"]} - -s -o -",
                                                     stdin_data: data.force_encoding("ASCII-8BIT"),
                                                     binmode:    true)
-    raise "Got status #{status.exitstatus}:\n#{stderr_str}" unless status.success?
+    return result["data"].map(&:chr).join("") unless status.success?
     stdout_str
   end
 
